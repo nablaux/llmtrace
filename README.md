@@ -504,10 +504,19 @@ Each example supports both Anthropic and OpenAI — set whichever API key you ha
 ## Contributing
 
 ```bash
-git clone https://github.com/yourname/llmtrace && cd llmtrace
+git clone https://github.com/nablaux/llmtrace && cd llmtrace
 uv sync --all-extras
-uv run mypy src/llmtrace/ --strict
+uv run pre-commit install
+```
+
+Pre-commit hooks run automatically on every commit: ruff lint + format, yaml validation, trailing whitespace cleanup, private key detection, and mypy strict type checking.
+
+To run checks manually:
+
+```bash
 uv run ruff check src/ tests/
+uv run ruff format src/ tests/
+uv run mypy src/llmtrace/ --strict
 uv run pytest tests/ -v --cov=src/llmtrace --cov-report=term-missing
 ```
 

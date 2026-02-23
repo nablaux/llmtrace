@@ -75,6 +75,7 @@ dev = [
     "respx>=0.22",
     "httpx>=0.27",
     "time-machine>=2.10",
+    "pre-commit>=4.0",
 ]
 
 # ─── Tool Configuration ───────────────────────────────────────────────
