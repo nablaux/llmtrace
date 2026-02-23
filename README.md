@@ -1,5 +1,8 @@
 # llmtrace
 
+[![CI](https://github.com/nablaux/llmtrace/actions/workflows/ci.yml/badge.svg)](https://github.com/nablaux/llmtrace/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/nablaux/llmtrace/graph/badge.svg)](https://codecov.io/gh/nablaux/llmtrace)
+
 Lightweight structured tracing for LLM applications. Zero required dependencies beyond Pydantic. No backend needed.
 
 ## Why llmtrace?
