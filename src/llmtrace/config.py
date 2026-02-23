@@ -80,7 +80,7 @@ def _resolve_sink(sink_str: str) -> Any:
         return OTLPSink()
 
     if sink_str.startswith("otlp:"):
-        endpoint = sink_str[len("otlp:"):]
+        endpoint = sink_str[len("otlp:") :]
         from llmtrace.sinks.otlp import OTLPSink
 
         return OTLPSink(endpoint=endpoint)

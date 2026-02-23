@@ -1,10 +1,10 @@
 """Benchmark trace emission overhead for sinks, enrichment, and normalizer."""
 
 import asyncio
-import os
 import tempfile
 import time
 from decimal import Decimal
+from pathlib import Path
 
 from llmtrace.capture.extractors import ExtractedData
 from llmtrace.config import LLMTraceConfig
@@ -90,16 +90,13 @@ async def bench_sinks(event: TraceEvent) -> dict[str, float]:
     results: dict[str, float] = {}
 
     # ConsoleSink -> /dev/null
-    devnull = open(os.devnull, "w")
-    try:
+    with Path("/dev/null").open("w") as devnull:
         console = ConsoleSink(colorize=False, output=devnull)
         results["ConsoleSink"] = await bench_sink("ConsoleSink", console, event)
-    finally:
-        devnull.close()
 
     # JsonFileSink -> temp file
     with tempfile.TemporaryDirectory() as tmpdir:
-        path = os.path.join(tmpdir, "trace.jsonl")
+        path = str(Path(tmpdir) / "trace.jsonl")
         json_sink = JsonFileSink(path, buffer_size=1)
         results["JsonFileSink"] = await bench_sink("JsonFileSink", json_sink, event)
         await json_sink.close()
@@ -212,12 +209,9 @@ def main() -> None:
     print()
     print(f"{'Component':<20} | {'Per-event (µs)':>14} | Status")
     print(f"{'-' * 20}-+-{'-' * 14}-+-{'-' * 10}")
-    all_passed = True
     for name, us, limit in rows:
         passed = us < limit
         status = "\u2713 PASS" if passed else "\u2717 FAIL"
-        if not passed:
-            all_passed = False
         print(f"{name:<20} | {us:>14.1f} | {status}")
     print()
 

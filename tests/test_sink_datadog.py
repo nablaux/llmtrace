@@ -39,9 +39,7 @@ def _make_datadog_sink(
                 "opentelemetry.sdk": MagicMock(),
                 "opentelemetry.sdk.resources": MagicMock(Resource=mock_resource_cls),
                 "opentelemetry.sdk.trace": MagicMock(TracerProvider=mock_provider_cls),
-                "opentelemetry.sdk.trace.export": MagicMock(
-                    BatchSpanProcessor=mock_processor_cls
-                ),
+                "opentelemetry.sdk.trace.export": MagicMock(BatchSpanProcessor=mock_processor_cls),
             },
         ):
             sink = DatadogSink(

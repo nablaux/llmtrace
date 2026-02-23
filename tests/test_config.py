@@ -256,18 +256,14 @@ class TestResolveSinkOTLP:
 
         assert isinstance(cfg.sink, DatadogSink)
 
-    def test_configure_langfuse_missing_env_raises(
-        self, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_configure_langfuse_missing_env_raises(self, monkeypatch: pytest.MonkeyPatch) -> None:
         """configure(sink='langfuse') without env vars raises ValueError."""
         monkeypatch.delenv("LANGFUSE_PUBLIC_KEY", raising=False)
         monkeypatch.delenv("LANGFUSE_SECRET_KEY", raising=False)
         with pytest.raises(ValueError, match="LANGFUSE_PUBLIC_KEY"):
             configure(sink="langfuse")
 
-    def test_configure_datadog_missing_env_raises(
-        self, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_configure_datadog_missing_env_raises(self, monkeypatch: pytest.MonkeyPatch) -> None:
         """configure(sink='datadog') without DD_API_KEY raises ValueError."""
         monkeypatch.delenv("DD_API_KEY", raising=False)
         with pytest.raises(ValueError, match="DD_API_KEY"):

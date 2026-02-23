@@ -59,11 +59,11 @@ all = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/yourname/llmtrace"
-Documentation = "https://github.com/yourname/llmtrace#readme"
-Repository = "https://github.com/yourname/llmtrace"
-Issues = "https://github.com/yourname/llmtrace/issues"
-Changelog = "https://github.com/yourname/llmtrace/releases"
+Homepage = "https://github.com/nablaux/llmtrace"
+Documentation = "https://github.com/nablaux/llmtrace#readme"
+Repository = "https://github.com/nablaux/llmtrace"
+Issues = "https://github.com/nablaux/llmtrace/issues"
+Changelog = "https://github.com/nablaux/llmtrace/releases"
 
 [dependency-groups]
 dev = [
@@ -140,6 +140,7 @@ ignore = [
 [tool.ruff.lint.per-file-ignores]
 "tests/**" = ["TC001"]
 "examples/**" = ["T20"]
+"benchmarks/**" = ["T20", "N806"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["llmtrace"]

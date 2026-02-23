@@ -103,8 +103,17 @@ def _wrap_async(
             _current_parent_id.reset(parent_token)
             _current_trace_id.reset(trace_token)
             await _emit_trace_async(
-                config, result, kwargs, provider, tags, metadata, latency_ms, error_trace,
-                trace_id=trace_id, span_id=span_id, parent_id=saved_parent,
+                config,
+                result,
+                kwargs,
+                provider,
+                tags,
+                metadata,
+                latency_ms,
+                error_trace,
+                trace_id=trace_id,
+                span_id=span_id,
+                parent_id=saved_parent,
             )
 
     return wrapper
@@ -152,8 +161,17 @@ def _wrap_sync(
             _current_parent_id.reset(parent_token)
             _current_trace_id.reset(trace_token)
             _emit_trace_sync(
-                config, result, kwargs, provider, tags, metadata, latency_ms, error_trace,
-                trace_id=trace_id, span_id=span_id, parent_id=saved_parent,
+                config,
+                result,
+                kwargs,
+                provider,
+                tags,
+                metadata,
+                latency_ms,
+                error_trace,
+                trace_id=trace_id,
+                span_id=span_id,
+                parent_id=saved_parent,
             )
 
     return wrapper
@@ -260,8 +278,17 @@ async def _emit_trace_async(
     """Build and emit a trace event (async path)."""
     try:
         event = _build_trace_event(
-            config, result, kwargs, provider, tags, metadata, latency_ms, error_trace,
-            trace_id=trace_id, span_id=span_id, parent_id=parent_id,
+            config,
+            result,
+            kwargs,
+            provider,
+            tags,
+            metadata,
+            latency_ms,
+            error_trace,
+            trace_id=trace_id,
+            span_id=span_id,
+            parent_id=parent_id,
         )
         if config.sink is not None:
             await config.sink.write(event)
@@ -286,8 +313,17 @@ def _emit_trace_sync(
     """Build and emit a trace event (sync path)."""
     try:
         event = _build_trace_event(
-            config, result, kwargs, provider, tags, metadata, latency_ms, error_trace,
-            trace_id=trace_id, span_id=span_id, parent_id=parent_id,
+            config,
+            result,
+            kwargs,
+            provider,
+            tags,
+            metadata,
+            latency_ms,
+            error_trace,
+            trace_id=trace_id,
+            span_id=span_id,
+            parent_id=parent_id,
         )
         if config.sink is None:
             return

@@ -113,7 +113,9 @@ async def main() -> None:
         print(f"\nJsonFileSink output → {jsonl_path}")
         for line in jsonl_path.read_text().strip().splitlines():
             data = json.loads(line)
-            print(f"  trace_id={data['trace_id'][:8]}... provider={data['provider']} model={data['model']}")
+            print(
+                f"  trace_id={data['trace_id'][:8]}... provider={data['provider']} model={data['model']}"
+            )
             req = json.dumps(data.get("request", {}))
             if "SHA:" in req or "REDACTED" in req:
                 print(f"  PII redacted: ...{req[:120]}...")

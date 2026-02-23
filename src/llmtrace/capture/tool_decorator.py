@@ -25,11 +25,11 @@ def _safe_serialize(value: Any) -> Any:
     """Best-effort serialization of a value for trace storage."""
     if value is None:
         return None
-    if isinstance(value, (str, int, float, bool)):
+    if isinstance(value, str | int | float | bool):
         return value
     if isinstance(value, dict):
         return {str(k): _safe_serialize(v) for k, v in value.items()}
-    if isinstance(value, (list, tuple)):
+    if isinstance(value, list | tuple):
         return [_safe_serialize(v) for v in value]
     if hasattr(value, "model_dump"):
         try:

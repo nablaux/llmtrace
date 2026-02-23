@@ -125,8 +125,7 @@ class OTLPSink(BaseSink):
             from opentelemetry.sdk.trace.export import BatchSpanProcessor
         except ImportError as exc:
             raise ImportError(
-                "OTLPSink requires opentelemetry-sdk. "
-                "Install with: pip install llmtrace[otlp]"
+                "OTLPSink requires opentelemetry-sdk. Install with: pip install llmtrace[otlp]"
             ) from exc
 
         self._capture_content = capture_content

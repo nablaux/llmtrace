@@ -543,9 +543,7 @@ class TestOTLPSinkLifecycle:
 class TestOTLPSinkErrorSafety:
     """Tests that write() never raises, even on internal error."""
 
-    async def test_write_error_does_not_raise(
-        self, caplog: pytest.LogCaptureFixture
-    ) -> None:
+    async def test_write_error_does_not_raise(self, caplog: pytest.LogCaptureFixture) -> None:
         sink, _exporter = _make_sink()
 
         # Sabotage the tracer to force an error

@@ -31,9 +31,7 @@ class LangfuseSink(OTLPSink):
                   Use "https://us.cloud.langfuse.com" for US cloud.
             **kwargs: Additional arguments passed to OTLPSink.
         """
-        credentials = base64.b64encode(
-            f"{public_key}:{secret_key}".encode()
-        ).decode()
+        credentials = base64.b64encode(f"{public_key}:{secret_key}".encode()).decode()
 
         kwargs.pop("protocol", None)
         kwargs.pop("endpoint", None)

@@ -254,7 +254,9 @@ class BaseInstrumentor(ABC):
                 if not is_coro:
                     latency_ms = (time.perf_counter() - start) * 1000
                     try:
-                        event = _build_event(config, provider, result, kwargs, latency_ms, error_trace)
+                        event = _build_event(
+                            config, provider, result, kwargs, latency_ms, error_trace
+                        )
                         _emit_sync(config, event)
                     except Exception as emit_exc:
                         logger.warning("Failed to emit trace event: %s", emit_exc)
