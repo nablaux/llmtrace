@@ -1,0 +1,175 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "llmtrace"
+version = "0.1.0"
+description = "Lightweight structured tracing for LLM applications"
+readme = "README.md"
+license = "Apache-2.0"
+requires-python = ">=3.11"
+authors = [
+    { name = "Your Name", email = "you@example.com" },
+]
+keywords = ["llm", "tracing", "observability", "openai", "anthropic", "ai"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: System :: Monitoring",
+    "Typing :: Typed",
+]
+dependencies = [
+    "pydantic>=2.0,<3.0",
+]
+
+[project.optional-dependencies]
+anthropic = ["anthropic>=0.40"]
+openai = ["openai>=1.50"]
+google = ["google-genai>=1.0"]
+otlp = [
+    "opentelemetry-api>=1.20",
+    "opentelemetry-sdk>=1.20",
+    "opentelemetry-exporter-otlp-proto-http>=1.20",
+]
+otlp-grpc = [
+    "llmtrace[otlp]",
+    "opentelemetry-exporter-otlp-proto-grpc>=1.20",
+]
+langfuse = ["llmtrace[otlp]"]
+datadog = ["llmtrace[otlp]"]
+webhook = ["httpx>=0.27"]
+presidio = ["presidio-analyzer>=2.2"]
+all = [
+    "llmtrace[anthropic]",
+    "llmtrace[openai]",
+    "llmtrace[google]",
+    "llmtrace[otlp]",
+    "llmtrace[otlp-grpc]",
+    "llmtrace[langfuse]",
+    "llmtrace[datadog]",
+    "llmtrace[webhook]",
+    "llmtrace[presidio]",
+]
+
+[project.urls]
+Homepage = "https://github.com/yourname/llmtrace"
+Documentation = "https://github.com/yourname/llmtrace#readme"
+Repository = "https://github.com/yourname/llmtrace"
+Issues = "https://github.com/yourname/llmtrace/issues"
+Changelog = "https://github.com/yourname/llmtrace/releases"
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.24",
+    "pytest-cov>=5.0",
+    "mypy>=1.13",
+    "ruff>=0.8",
+    "respx>=0.22",
+    "httpx>=0.27",
+    "time-machine>=2.10",
+]
+
+# ─── Tool Configuration ───────────────────────────────────────────────
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/llmtrace"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+warn_return_any = true
+warn_unused_configs = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_any_generics = true
+no_implicit_optional = true
+no_implicit_reexport = true
+plugins = ["pydantic.mypy"]
+
+[[tool.mypy.overrides]]
+module = [
+    "anthropic.*",
+    "openai.*",
+    "google.*",
+    "opentelemetry.*",
+    "llmtrace.sinks.*",
+]
+ignore_missing_imports = true
+
+[tool.pydantic-mypy]
+init_forbid_extra = true
+init_typed = true
+warn_required_dynamic_aliases = true
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = [
+    "E",      # pycodestyle errors
+    "W",      # pycodestyle warnings
+    "F",      # pyflakes
+    "I",      # isort
+    "N",      # pep8-naming
+    "UP",     # pyupgrade
+    "B",      # flake8-bugbear
+    "SIM",    # flake8-simplify
+    "TCH",    # flake8-type-checking
+    "RUF",    # ruff-specific rules
+    "PTH",    # flake8-use-pathlib
+    "LOG",    # flake8-logging
+    "T20",    # flake8-print (no print statements)
+]
+ignore = [
+    "E501",   # line too long (handled by formatter)
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["TC001"]
+"examples/**" = ["T20"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["llmtrace"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+docstring-code-format = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+addopts = "-ra --strict-markers"
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "integration: marks tests requiring external services",
+]
+
+[tool.coverage.run]
+source = ["llmtrace"]
+branch = true
+
+[tool.coverage.report]
+fail_under = 90
+show_missing = true
+exclude_lines = [
+    "pragma: no cover",
+    "if TYPE_CHECKING:",
+    "if __name__ == .__main__.",
+    "@overload",
+    "raise NotImplementedError",
+    "\\.\\.\\.",
+]
