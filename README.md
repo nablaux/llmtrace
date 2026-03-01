@@ -1,6 +1,6 @@
 # llmtrace
 
-[![PyPI](https://img.shields.io/pypi/v/llmtrace)](https://pypi.org/project/llmtrace/)
+[![PyPI](https://img.shields.io/pypi/v/llm-trace)](https://pypi.org/project/llm-trace/)
 [![CI](https://github.com/nablaux/llmtrace/actions/workflows/ci.yml/badge.svg)](https://github.com/nablaux/llmtrace/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/nablaux/llmtrace/graph/badge.svg)](https://codecov.io/gh/nablaux/llmtrace)
 
@@ -18,24 +18,24 @@ Lightweight structured tracing for LLM applications. Zero required dependencies 
 Requires **Python 3.11+**.
 
 ```bash
-pip install llmtrace                    # core only (pydantic)
-pip install llmtrace[anthropic]         # + Anthropic SDK
-pip install llmtrace[openai]            # + OpenAI SDK
-pip install llmtrace[webhook]           # + WebhookSink (httpx)
-pip install llmtrace[otlp]             # + OTLP export (OpenTelemetry)
-pip install llmtrace[otlp-grpc]        # + gRPC OTLP export
-pip install llmtrace[langfuse]         # + Langfuse (uses OTLP)
-pip install llmtrace[datadog]          # + Datadog (uses OTLP)
-pip install llmtrace[presidio]         # + NLP-based PII detection
-pip install llmtrace[all]              # everything
+pip install llm-trace                    # core only (pydantic)
+pip install llm-trace[anthropic]         # + Anthropic SDK
+pip install llm-trace[openai]            # + OpenAI SDK
+pip install llm-trace[webhook]           # + WebhookSink (httpx)
+pip install llm-trace[otlp]             # + OTLP export (OpenTelemetry)
+pip install llm-trace[otlp-grpc]        # + gRPC OTLP export
+pip install llm-trace[langfuse]         # + Langfuse (uses OTLP)
+pip install llm-trace[datadog]          # + Datadog (uses OTLP)
+pip install llm-trace[presidio]         # + NLP-based PII detection
+pip install llm-trace[all]              # everything
 ```
 
 Combine extras as needed:
 
 ```bash
-pip install llmtrace[anthropic,openai,webhook]
-pip install llmtrace[anthropic,langfuse]
-pip install llmtrace[openai,datadog,presidio]
+pip install llm-trace[anthropic,openai,webhook]
+pip install llm-trace[anthropic,langfuse]
+pip install llm-trace[openai,datadog,presidio]
 ```
 
 ## Quick Start
