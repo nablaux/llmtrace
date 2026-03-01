@@ -85,7 +85,12 @@ def _create_exporter(
                 "HTTP OTLP exporter requires opentelemetry-exporter-otlp-proto-http. "
                 "Install with: pip install llmtrace[otlp]"
             ) from exc
-        return HttpExporter(endpoint=endpoint, headers=headers)
+        # The HTTP exporter only auto-appends /v1/traces when using the
+        # OTEL_EXPORTER_OTLP_ENDPOINT env var fallback. When endpoint is
+        # passed explicitly, it's used as-is. We append the path ourselves
+        # so users can pass a base URL like "http://localhost:4318".
+        traces_endpoint = endpoint.rstrip("/") + "/v1/traces"
+        return HttpExporter(endpoint=traces_endpoint, headers=headers)
 
 
 class OTLPSink(BaseSink):

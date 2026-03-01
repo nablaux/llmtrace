@@ -10,7 +10,7 @@ readme = "README.md"
 license = "Apache-2.0"
 requires-python = ">=3.11"
 authors = [
-    { name = "Your Name", email = "you@example.com" },
+    { name = "nablaux" },
 ]
 keywords = ["llm", "tracing", "observability", "openai", "anthropic", "ai"]
 classifiers = [

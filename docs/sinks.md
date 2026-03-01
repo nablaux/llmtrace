@@ -182,28 +182,48 @@ Protocol is forced to `http/protobuf` (Langfuse does not support gRPC).
 
 ## DatadogSink
 
-Pre-configured OTLPSink for [Datadog](https://www.datadoghq.com) OTLP intake.
+Pre-configured OTLPSink for [Datadog](https://www.datadoghq.com).
 
 `pip install llmtrace[datadog]`
+
+> **Important:** Datadog's direct OTLP traces intake (`otlp-http-intake.*.datadoghq.com`) is in [preview](https://docs.datadoghq.com/opentelemetry/setup/otlp_ingest/) and requires requesting access from your Datadog account team. The recommended approach is to run a [Datadog Agent](https://docs.datadoghq.com/opentelemetry/setup/otlp_ingest_in_the_agent/) that receives OTLP locally and forwards traces to Datadog.
 
 ```python
 from llmtrace.sinks import DatadogSink
 
-# Direct intake (agentless)
-sink = DatadogSink(api_key="dd-...", site="us1")
+# Recommended: via Datadog Agent running locally
+sink = DatadogSink(
+    api_key="dd-...",
+    endpoint="http://localhost:4318",  # Agent OTLP endpoint
+    service_name="my-app",
+    resource_attributes={"deployment.environment": "production"},
+)
 
-# Via Datadog Agent
-sink = DatadogSink(api_key="", endpoint="http://localhost:4318")
+# Direct intake (requires preview access)
+sink = DatadogSink(api_key="dd-...", site="eu1")
 ```
 
 | Parameter | Type | Default | Description |
 |---|---|---|---|
 | `api_key` | `str` | required | Datadog API key (set via `DD-API-KEY` header) |
 | `site` | `str` | `"us1"` | Datadog site: `us1`, `us3`, `us5`, `eu1`, `ap1`, `gov` |
-| `endpoint` | `str \| None` | `None` | Override endpoint (e.g., for Datadog Agent at `http://localhost:4318`) |
-| `**kwargs` | | | Passed to `OTLPSink` (e.g., `service_name`, `capture_content`) |
+| `endpoint` | `str \| None` | `None` | Override endpoint. Use this for Datadog Agent setups (e.g., `http://localhost:4318`) |
+| `**kwargs` | | | Passed to `OTLPSink` (e.g., `service_name`, `resource_attributes`, `capture_content`) |
 
-**Supported sites:**
+**Datadog Agent setup:**
+
+The Datadog Agent receives OTLP traces and forwards them to Datadog. This is the standard pattern in production — the agent runs as a sidecar (Kubernetes, ECS) or on each host (VMs) and handles buffering, retries, and host metadata enrichment.
+
+To enable OTLP ingestion on the agent, set:
+
+```
+DD_OTLP_CONFIG_RECEIVER_PROTOCOLS_HTTP_ENDPOINT=0.0.0.0:4318
+DD_APM_ENABLED=true
+```
+
+See [`examples/docker-compose.yaml`](../examples/docker-compose.yaml) for a ready-to-use local setup with the Datadog Agent, an OTLP collector, and Jaeger UI.
+
+**Supported sites (direct intake):**
 
 | Site | Endpoint |
 |---|---|

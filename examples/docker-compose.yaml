@@ -1,0 +1,35 @@
+name: llmtrace-otel
+
+services:
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:latest
+    ports:
+      - "4317:4317"   # OTLP gRPC
+      - "4318:4318"   # OTLP HTTP
+    volumes:
+      - ./otel-collector-config.yaml:/etc/otelcol-contrib/config.yaml
+    depends_on:
+      - jaeger
+
+  jaeger:
+    image: jaegertracing/jaeger:latest
+    ports:
+      - "16686:16686" # Jaeger UI
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
+
+  # Datadog Agent — receives OTLP on port 4319 (to avoid conflict with
+  # the OTel collector on 4318) and forwards traces to Datadog.
+  # Requires DD_API_KEY to be set in the environment or a .env file.
+  datadog-agent:
+    image: gcr.io/datadoghq/agent:7
+    ports:
+      - "4319:4318"   # OTLP HTTP (host 4319 → container 4318)
+    environment:
+      - DD_API_KEY=${DD_API_KEY}
+      - DD_SITE=${DD_SITE:-datadoghq.eu}
+      - DD_HOSTNAME=llmtrace-dev
+      - DD_OTLP_CONFIG_RECEIVER_PROTOCOLS_HTTP_ENDPOINT=0.0.0.0:4318
+      - DD_APM_ENABLED=true
+    profiles:
+      - datadog

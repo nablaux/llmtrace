@@ -1,5 +1,6 @@
 # llmtrace
 
+[![PyPI](https://img.shields.io/pypi/v/llmtrace)](https://pypi.org/project/llmtrace/)
 [![CI](https://github.com/nablaux/llmtrace/actions/workflows/ci.yml/badge.svg)](https://github.com/nablaux/llmtrace/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/nablaux/llmtrace/graph/badge.svg)](https://codecov.io/gh/nablaux/llmtrace)
 
@@ -260,22 +261,37 @@ Or via environment variables: `LANGFUSE_PUBLIC_KEY`, `LANGFUSE_SECRET_KEY`, `LAN
 
 Pre-configured OTLP export to [Datadog](https://www.datadoghq.com).
 
+**Recommended: use the Datadog Agent.** Datadog's direct OTLP traces intake (`otlp-http-intake.*.datadoghq.com`) is in preview and requires requesting access. The standard approach is to run a [Datadog Agent](https://docs.datadoghq.com/opentelemetry/setup/otlp_ingest_in_the_agent/) that receives OTLP locally and forwards traces to Datadog.
+
 ```python
 from llmtrace.sinks import DatadogSink
 
-# Using a site shortcode
-sink = DatadogSink(api_key="dd-...", site="us1")
-
-# Using a custom endpoint (e.g., Datadog Agent or a different region URL)
+# Via Datadog Agent (recommended) — agent runs locally, receives OTLP on port 4318
 sink = DatadogSink(
     api_key="dd-...",
-    endpoint="http://localhost:4318",  # Datadog Agent
+    endpoint="http://localhost:4318",
 )
+
+# Direct intake (requires preview access) — sends directly to Datadog
+sink = DatadogSink(api_key="dd-...", site="us1")
 ```
 
-Supported site shortcodes: `us1`, `us3`, `us5`, `eu1`, `ap1`, `gov`. These resolve to the corresponding `otlp-http-intake.*.datadoghq.com` URLs. Pass `endpoint` directly to use any custom URL.
+Supported site shortcodes: `us1`, `us3`, `us5`, `eu1`, `ap1`, `gov`. These resolve to the corresponding `otlp-http-intake.*.datadoghq.com` URLs. Pass `endpoint` directly to use the Datadog Agent or any custom URL.
 
 Or via environment variables: `DD_API_KEY`, `DD_SITE`.
+
+**Local development setup** — see the [`examples/`](examples/) directory for a Docker Compose setup with the Datadog Agent, OTLP collector, and Jaeger UI.
+
+#### How it works in production
+
+In a deployed environment, the Datadog Agent runs as a sidecar container (Kubernetes, ECS) or on each host (VMs). Your application sends OTLP traces to the agent at `localhost:4318`, and the agent forwards them to Datadog with enriched metadata (host tags, container info, etc.):
+
+```
+Your app  →  Datadog Agent (localhost:4318)  →  Datadog backend
+              (adds host/container tags)
+```
+
+This is the same pattern used by all Datadog integrations — the agent handles buffering, retries, and authentication.
 
 ## Provider Support
 
@@ -488,8 +504,96 @@ The [`examples/`](examples/) directory contains runnable scripts demonstrating c
 | [`otlp_tracing.py`](examples/otlp_tracing.py) | OTLP export to a local collector |
 | [`langfuse_tracing.py`](examples/langfuse_tracing.py) | Langfuse integration |
 | [`datadog_tracing.py`](examples/datadog_tracing.py) | Datadog integration |
+| [`real_test_otlp_datadog.py`](examples/real_test_otlp_datadog.py) | End-to-end: real LLM call → OTLP collector + Jaeger + Datadog Agent |
 
 Each example supports both Anthropic and OpenAI — set whichever API key you have available.
+
+### Local tracing infrastructure
+
+The `examples/` directory includes a Docker Compose setup with an OTLP collector, Jaeger UI, and an optional Datadog Agent. The [`real_test_otlp_datadog.py`](examples/real_test_otlp_datadog.py) script makes a real Anthropic API call with tool use and sends traces to all configured backends.
+
+#### Architecture
+
+```
+Your app
+  ├── OTLPSink  → localhost:4318 → OTLP Collector → Jaeger (UI on :16686)
+  └── DatadogSink → localhost:4319 → Datadog Agent → Datadog cloud
+```
+
+The OTLP collector receives traces and fans them out to Jaeger (for local viewing) and a debug exporter (logs every span to stdout). The Datadog Agent is a separate service that receives OTLP on a different port and forwards traces to Datadog.
+
+#### 1. Start the infrastructure
+
+```bash
+cd examples
+
+# Collector + Jaeger only
+docker compose up -d
+
+# With Datadog Agent (pass your API key)
+DD_API_KEY=your-key docker compose --profile datadog up -d
+```
+
+The Datadog Agent is behind a `datadog` [profile](https://docs.docker.com/compose/how-tos/profiles/) so it only starts when explicitly requested and doesn't fail when `DD_API_KEY` is unset.
+
+#### 2. Run the end-to-end test
+
+```bash
+export ANTHROPIC_API_KEY="sk-ant-..."
+uv run python real_test_otlp_datadog.py
+```
+
+The script reads all configuration from environment variables:
+
+| Variable | Default | Description |
+|---|---|---|
+| `ANTHROPIC_API_KEY` | (required) | Anthropic API key |
+| `DD_API_KEY` | (empty, skips Datadog) | Datadog API key |
+| `DD_SERVICE` | `llmtrace-test` | Service name in Datadog/OTLP |
+| `DD_ENV` | `development` | Environment tag |
+| `OTLP_ENDPOINT` | `http://localhost:4318` | OTLP collector endpoint |
+| `DD_AGENT_ENDPOINT` | `http://localhost:4319` | Datadog Agent OTLP endpoint |
+
+#### 3. View traces
+
+| Service | Port | URL |
+|---|---|---|
+| Jaeger UI | 16686 | http://localhost:16686 |
+| OTLP collector (HTTP) | 4318 | `http://localhost:4318` |
+| OTLP collector (gRPC) | 4317 | `http://localhost:4317` |
+| Datadog Agent (OTLP) | 4319 | `http://localhost:4319` (profile: `datadog`) |
+
+- **Jaeger**: open http://localhost:16686, select the service name from the dropdown, click "Find Traces"
+- **Datadog**: open your Datadog dashboard → APM → Traces, filter by `service:llmtrace-test`
+- **Collector debug logs**: `docker compose logs -f otel-collector` — every span is logged with full attributes
+
+#### 4. Configuration files
+
+The Docker setup uses two configuration files in `examples/`:
+
+**`docker-compose.yaml`** — three services:
+- `otel-collector` — receives OTLP on `:4318`/`:4317`, exports to Jaeger and debug logs
+- `jaeger` — trace storage and UI on `:16686`
+- `datadog-agent` — receives OTLP on `:4319`, forwards to Datadog (profile: `datadog`)
+
+**`otel-collector-config.yaml`** — collector pipeline:
+- Receives OTLP via gRPC and HTTP
+- Batches spans (5s timeout)
+- Exports to Jaeger (OTLP HTTP) and debug (stdout with full detail)
+
+#### 5. Stop
+
+```bash
+# Without Datadog
+docker compose down
+
+# With Datadog
+docker compose --profile datadog down
+```
+
+#### Datadog: direct intake vs. agent
+
+Datadog's direct OTLP traces intake (`otlp-http-intake.*.datadoghq.com`) is in [preview](https://docs.datadoghq.com/opentelemetry/setup/otlp_ingest/) and requires requesting access. The recommended approach is to run a [Datadog Agent](https://docs.datadoghq.com/opentelemetry/setup/otlp_ingest_in_the_agent/) that receives OTLP locally and forwards to Datadog. This is the same pattern used in production — the agent runs as a sidecar (Kubernetes, ECS) or on each host (VMs) and handles buffering, retries, host tags, and authentication.
 
 ## Known Limitations
 

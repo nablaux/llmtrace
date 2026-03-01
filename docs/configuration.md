@@ -83,7 +83,11 @@ llmtrace.configure(
 # Or send traces to Langfuse:
 # llmtrace.configure(sink="langfuse")  # uses LANGFUSE_PUBLIC_KEY, LANGFUSE_SECRET_KEY env vars
 
-# Or to Datadog:
+# Or to Datadog (via Agent — recommended):
+# from llmtrace.sinks import DatadogSink
+# llmtrace.configure(sink=DatadogSink(api_key="dd-...", endpoint="http://localhost:4318"))
+#
+# Or via env vars (uses direct intake, requires preview access):
 # llmtrace.configure(sink="datadog")  # uses DD_API_KEY, DD_SITE env vars
 ```
 
