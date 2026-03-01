@@ -609,20 +609,25 @@ Datadog's direct OTLP traces intake (`otlp-http-intake.*.datadoghq.com`) is in [
 
 ```bash
 git clone https://github.com/nablaux/llmtrace && cd llmtrace
-uv sync --all-extras
+make install
 uv run pre-commit install
 ```
 
 Pre-commit hooks run automatically on every commit: ruff lint + format, yaml validation, trailing whitespace cleanup, private key detection, and mypy strict type checking.
 
-To run checks manually:
+Available Make targets:
 
 ```bash
-uv run ruff check src/ tests/
-uv run ruff format src/ tests/
-uv run mypy src/llmtrace/ --strict
-uv run pytest tests/ -v --cov=src/llmtrace --cov-report=term-missing
+make install    # Install all dependencies
+make lint       # Run ruff and mypy
+make format     # Auto-format code
+make test       # Run tests with coverage
+make check      # Run lint + test
+make build      # Build package
+make clean      # Remove build artifacts and caches
 ```
+
+Releases happen automatically when conventional commits (`feat:`, `fix:`) are pushed to `main`. Use `make release-dry` to preview the next version locally.
 
 ## License
 

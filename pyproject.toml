@@ -175,3 +175,10 @@ exclude_lines = [
     "raise NotImplementedError",
     "\\.\\.\\.",
 ]
+
+[tool.semantic_release]
+version_toml = ["pyproject.toml:project.version"]
+version_variables = ["src/llmtrace/_version.py:__version__"]
+branch = "main"
+commit_message = "release: v{version}"
+tag_format = "v{version}"
