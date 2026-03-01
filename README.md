@@ -2,7 +2,7 @@
 
 [![PyPI](https://img.shields.io/pypi/v/llmtrace-sdk)](https://pypi.org/project/llmtrace-sdk/)
 [![CI](https://github.com/nablaux/llmtrace/actions/workflows/ci.yml/badge.svg)](https://github.com/nablaux/llmtrace/actions/workflows/ci.yml)
-[![codecov](https://codecov.io/gh/nablaux/llmtrace/graph/badge.svg)](https://codecov.io/gh/nablaux/llmtrace)
+[![coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/nablaux/81fefc381cb50c6b689e15f4a801d9a4/raw/coverage.json)](https://github.com/nablaux/llmtrace/actions/workflows/ci.yml)
 
 Lightweight structured tracing for LLM applications. Zero required dependencies beyond Pydantic. No backend needed.
 
