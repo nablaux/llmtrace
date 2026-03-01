@@ -1152,7 +1152,7 @@ wheels = [
 ]
 
 [[package]]
-name = "llmtrace"
+name = "llmtrace-sdk"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
@@ -1226,18 +1226,18 @@ requires-dist = [
     { name = "anthropic", marker = "extra == 'anthropic'", specifier = ">=0.40" },
     { name = "google-genai", marker = "extra == 'google'", specifier = ">=1.0" },
     { name = "httpx", marker = "extra == 'webhook'", specifier = ">=0.27" },
-    { name = "llmtrace", extras = ["anthropic"], marker = "extra == 'all'" },
-    { name = "llmtrace", extras = ["datadog"], marker = "extra == 'all'" },
-    { name = "llmtrace", extras = ["google"], marker = "extra == 'all'" },
-    { name = "llmtrace", extras = ["langfuse"], marker = "extra == 'all'" },
-    { name = "llmtrace", extras = ["openai"], marker = "extra == 'all'" },
-    { name = "llmtrace", extras = ["otlp"], marker = "extra == 'all'" },
-    { name = "llmtrace", extras = ["otlp"], marker = "extra == 'datadog'" },
-    { name = "llmtrace", extras = ["otlp"], marker = "extra == 'langfuse'" },
-    { name = "llmtrace", extras = ["otlp"], marker = "extra == 'otlp-grpc'" },
-    { name = "llmtrace", extras = ["otlp-grpc"], marker = "extra == 'all'" },
-    { name = "llmtrace", extras = ["presidio"], marker = "extra == 'all'" },
-    { name = "llmtrace", extras = ["webhook"], marker = "extra == 'all'" },
+    { name = "llmtrace-sdk", extras = ["anthropic"], marker = "extra == 'all'" },
+    { name = "llmtrace-sdk", extras = ["datadog"], marker = "extra == 'all'" },
+    { name = "llmtrace-sdk", extras = ["google"], marker = "extra == 'all'" },
+    { name = "llmtrace-sdk", extras = ["langfuse"], marker = "extra == 'all'" },
+    { name = "llmtrace-sdk", extras = ["openai"], marker = "extra == 'all'" },
+    { name = "llmtrace-sdk", extras = ["otlp"], marker = "extra == 'all'" },
+    { name = "llmtrace-sdk", extras = ["otlp"], marker = "extra == 'datadog'" },
+    { name = "llmtrace-sdk", extras = ["otlp"], marker = "extra == 'langfuse'" },
+    { name = "llmtrace-sdk", extras = ["otlp"], marker = "extra == 'otlp-grpc'" },
+    { name = "llmtrace-sdk", extras = ["otlp-grpc"], marker = "extra == 'all'" },
+    { name = "llmtrace-sdk", extras = ["presidio"], marker = "extra == 'all'" },
+    { name = "llmtrace-sdk", extras = ["webhook"], marker = "extra == 'all'" },
     { name = "openai", marker = "extra == 'openai'", specifier = ">=1.50" },
     { name = "opentelemetry-api", marker = "extra == 'otlp'", specifier = ">=1.20" },
     { name = "opentelemetry-exporter-otlp-proto-grpc", marker = "extra == 'otlp-grpc'", specifier = ">=1.20" },
