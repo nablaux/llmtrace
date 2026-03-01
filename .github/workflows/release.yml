@@ -25,7 +25,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - uses: python-semantic-release/python-semantic-release@v9
+      - uses: python-semantic-release/python-semantic-release@v10
         id: release
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
