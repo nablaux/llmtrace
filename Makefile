@@ -50,4 +50,4 @@ clean: ## Remove build artifacts and caches
 ## release-dry: Preview next version (dry run)
 .PHONY: release-dry
 release-dry: ## Preview next version (dry run)
-	uvx python-semantic-release version --noop --print
+	uvx python-semantic-release version --print --no-commit --no-tag --no-push --no-changelog
