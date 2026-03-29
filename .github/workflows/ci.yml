@@ -62,7 +62,7 @@ jobs:
           echo "COVERAGE_PCT=$COVERAGE_PCT" >> $GITHUB_ENV
       - name: Generate coverage badge
         if: matrix.python-version == '3.12' && github.ref == 'refs/heads/main'
-        uses: schneegans/dynamic-badges-action@v1.7.0
+        uses: schneegans/dynamic-badges-action@v1.8.0
         with:
           auth: ${{ secrets.GIST_TOKEN }}
           gistID: 81fefc381cb50c6b689e15f4a801d9a4
